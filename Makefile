@@ -1,5 +1,4 @@
-CFLAGS = -I include
-
+CFLAGS = -I include -O3
 INSTALL_DIR = ~/.local/
 
 all: lib/libconio.a
