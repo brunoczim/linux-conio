@@ -1,5 +1,5 @@
 # linux-conio
-A compatibility library so Linux users can work with Conio projects. Implemented on ncurses.
+A compatibility library so Linux users can work with Conio projects. Implemented on ncurses. Currently very incomplete.
 
 # Building
 
