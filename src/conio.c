@@ -1,7 +1,6 @@
 #include <conio.h>
 #include <conio2.h>
 #undef getch
-#undef kbhit
 
 #include <stdlib.h>
 #include <ncurses.h>
@@ -39,17 +38,23 @@ struct ibuf {
 static struct ibuf global_ibuf = { IBUF_EMPTY, 0 };
 
 /**
- * Converts a ncurses keycode to a conio keycode.
+ * Converts a ncurses keycode to a conio keycode. Conversion happens on
+ * the passed pointer. Returns if a conio keycode is implemented for the
+ * ncurses keycode passed.
  */
-static int conv_extended(int ch)
+static int conv_extended(int *ch)
 {
-    switch (ch) {
-        case KEY_UP: return CONIO_UP;
-        case KEY_DOWN: return CONIO_DOWN;
-        case KEY_LEFT: return CONIO_LEFT;
-        case KEY_RIGHT: return CONIO_RIGHT;
-        default: return ch;
+    int success = 1;
+    
+    switch (*ch) {
+        case KEY_UP: *ch = CONIO_UP; break;
+        case KEY_DOWN: *ch = CONIO_DOWN; break;
+        case KEY_LEFT: *ch = CONIO_LEFT; break;
+        case KEY_RIGHT: *ch = CONIO_RIGHT; break;
+        default: success = 0;
     }
+
+    return success;
 }
 
 /**
@@ -58,15 +63,19 @@ static int conv_extended(int ch)
  */
 static int ibuf_loadch(struct ibuf *buf)
 {
-    if (buf->state == IBUF_EMPTY) {
-        buf->ch = getch();
+    int iterate = buf->state == IBUF_EMPTY;
 
-        if (buf->ch != ERR) {
-            if (buf->ch >= 0 && buf->ch <= 0x7F) {
-                buf->state = IBUF_READY;
-            } else {
+    while (iterate) {
+        buf->ch = getch();
+        iterate = 0;
+
+        if (buf->ch >= 0 && buf->ch <= 0x7F) {
+            buf->state = IBUF_READY;
+        } else if (buf->ch != ERR) {
+            if (conv_extended(&buf->ch)) {
                 buf->state = IBUF_PARTIAL;
-                buf->ch = conv_extended(buf->ch);
+            } else {
+                iterate = 1;
             }
         }
     }
