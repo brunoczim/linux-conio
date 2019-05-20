@@ -7,6 +7,9 @@ extern "C" {
 
 int _getch(void);
 int _kbhit(void);
+int _putch(int ch);
+int _cprintf(char const *fmt, ...);
+int _cputs(char const *str);
 
 #ifdef __cplusplus
 }

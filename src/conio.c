@@ -2,8 +2,10 @@
 #include <conio2.h>
 #undef getch
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
+#include <stdarg.h>
 
 #define CONIO_UP 72
 #define CONIO_DOWN 80
@@ -126,7 +128,7 @@ static void init(void)
         needs_init = 0;
         initscr();
         noecho();
-        raw();
+        cbreak();
         keypad(stdscr, 1);
         set_escdelay(0);
         atexit(cleanup);
@@ -151,6 +153,62 @@ int _kbhit()
     return ibuf_loadch(&global_ibuf);
 }
 
+int _putch(int ch)
+{
+    int ret = EOF;
+
+    if (addch(ch) != ERR) {
+        refresh();
+        ret = ch;
+    }
+
+    return ret;
+}
+
+
+int _cprintf(char const *fmt, ...)
+{
+    int ret;
+    int prev_x, prev_y;
+    int cur_x, cur_y;
+    int max_x, max_y;
+    va_list args;
+
+    init();
+    getyx(stdscr, prev_y, prev_x);
+
+    va_start(args, fmt);
+    vwprintw(stdscr, fmt, args);
+    refresh();
+    va_end(args);
+
+    getyx(stdscr, cur_y, cur_x);
+
+    if (cur_y == prev_y) {
+        ret = cur_x - prev_x;
+    } else {
+        getmaxyx(stdscr, max_y, max_x);
+        ret = max_x - prev_x + 1;
+        ret += (cur_y - prev_y - 1) * (max_x + 1);
+        ret += cur_x;
+    }
+
+    return ret;
+}
+
+int _cputs(char const *str)
+{
+    int ret = 0;
+
+    init();
+    if (addstr(str) == ERR) {
+        ret = -1;
+    }
+    refresh();
+
+    return ret;
+}
+
 void gotoxy(int x, int y)
 {
     init();
@@ -163,4 +221,10 @@ void putchxy(int x, int y, char ch)
     init();
     mvaddch(y, x, ch);
     refresh();
+}
+
+void clrscr(void)
+{
+    init();
+    clear();
 }

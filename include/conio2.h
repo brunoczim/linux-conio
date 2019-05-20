@@ -5,13 +5,15 @@
 extern "C" {
 #endif
 
-#ifndef CONIO_NO_ALIASES
 #define getch _getch
 #define kbhit _kbhit
-#endif
+#define cputs _cputs
+#define putch _putch
+#define cprintf _cprintf
 
 void gotoxy(int x, int y);
 void putchxy(int x, int y, char ch);
+void clrscr(void);
 
 #ifdef __cplusplus
 }
