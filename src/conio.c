@@ -184,6 +184,9 @@ int _cprintf(char const *fmt, ...)
 
     getyx(stdscr, cur_y, cur_x);
 
+    /* vwprintw does not return the number of written, but _cprintf does
+     * We have to approximate it, although it might be wrong.
+     */
     if (cur_y == prev_y) {
         ret = cur_x - prev_x;
     } else {
