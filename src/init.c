@@ -1,10 +1,12 @@
 #include <conio.h>
 #include <conio2.h>
+
 #include <stdio.h>
 #define COLORS tmp_name
 #include <ncurses.h>
 #undef COLORS
 #include <stdlib.h>
+
 #include "private.h"
 
 /**
