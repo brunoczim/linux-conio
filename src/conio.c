@@ -226,6 +226,13 @@ void putchxy(int x, int y, char ch)
     refresh();
 }
 
+void cputsxy(int x, int y, char *str)
+{
+    init();
+    mvaddstr(y, x, str);
+    refresh();
+}
+
 void clrscr(void)
 {
     init();
