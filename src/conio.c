@@ -4,7 +4,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#define COLORS tmp_name
 #include <ncurses.h>
+#undef COLORS
 #include <stdarg.h>
 
 #define CONIO_UP 72
@@ -117,6 +119,24 @@ static void cleanup(void)
 }
 
 /**
+ * Handles color resources initialization. Do not call directly.
+ */
+static void init_colors(void)
+{
+    short fg, bg;
+
+    if (!has_colors() || !can_change_color()) {
+        fputs("Error: no colors available", stderr);
+        cleanup();
+        abort();
+    }
+
+    start_color();
+    pair_content(0, &fg, &bg);
+    init_pair(1, fg, bg);
+}
+
+/**
  * Initializes ncurses dynamically. The initialization will only happen once,
  * even though it is called multiple times.
  */
@@ -127,11 +147,39 @@ static void init(void)
     if (needs_init) {
         needs_init = 0;
         initscr();
+        init_colors();
         noecho();
         cbreak();
         keypad(stdscr, 1);
         set_escdelay(0);
         atexit(cleanup);
+    }
+}
+
+/**
+ * Converts a conio color to a ncurses color. Some colors are not available
+ * in ncurses, and so their closest match is used.
+ */
+static short convert_color(COLORS color)
+{
+    switch (color) {
+        case BLACK:
+        case DARKGRAY: return COLOR_BLACK;
+        case WHITE:
+        case LIGHTGRAY: return COLOR_WHITE;
+        case YELLOW:
+        case BROWN: return COLOR_YELLOW;
+        case BLUE:
+        case LIGHTBLUE: return COLOR_BLUE;
+        case GREEN:
+        case LIGHTGREEN: return COLOR_GREEN;
+        case CYAN:
+        case LIGHTCYAN: return COLOR_CYAN;
+        case RED:
+        case LIGHTRED: return COLOR_RED;
+        case MAGENTA:
+        case LIGHTMAGENTA: return COLOR_MAGENTA;
+        default: return color;
     }
 }
 
@@ -237,4 +285,26 @@ void clrscr(void)
 {
     init();
     clear();
+}
+
+void textbackground(COLORS color)
+{
+    short fg, bg;
+
+    init();
+    pair_content(1, &fg, &bg);
+    bg = convert_color(color);
+    init_pair(1, fg, bg);
+    color_set(1, NULL);
+}
+
+void textcolor(COLORS color)
+{
+    short fg, bg;
+
+    init();
+    pair_content(1, &fg, &bg);
+    fg = convert_color(color);
+    init_pair(1, fg, bg);
+    color_set(1, NULL);
 }

@@ -11,10 +11,33 @@ extern "C" {
 #define putch _putch
 #define cprintf _cprintf
 
+
+typedef enum {
+    BLACK,
+    BLUE,
+    GREEN,
+    CYAN,
+    RED,
+    MAGENTA,
+    BROWN,
+    LIGHTGRAY,
+    DARKGRAY,
+    LIGHTBLUE,
+    LIGHTGREEN,
+    LIGHTCYAN,
+    LIGHTRED,
+    LIGHTMAGENTA,
+    YELLOW,
+    WHITE
+} COLORS;
+
 void gotoxy(int x, int y);
 void putchxy(int x, int y, char ch);
 void cputsxy(int x, int y, char *str);
 void clrscr(void);
+
+void textbackground(COLORS color);
+void textcolor(COLORS color);
 
 #ifdef __cplusplus
 }
