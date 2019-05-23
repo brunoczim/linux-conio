@@ -1,5 +1,5 @@
-#ifndef CONIO_INIT_H
-#define CONIO_INIT_H 1
+#ifndef CONIO_PRIVATE_H 
+#define CONIO_PRIVATE_H 1
 
 /**
  * Initializes ncurses dynamically. The initialization will only happen once,
