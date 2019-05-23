@@ -287,6 +287,20 @@ void clrscr(void)
     clear();
 }
 
+int wherex(void)
+{
+    int x, y;
+    getyx(stdscr, y, x);
+    return x;
+}
+
+int wherey(void)
+{
+    int x, y;
+    getyx(stdscr, y, x);
+    return y;
+}
+
 void textbackground(COLORS color)
 {
     short fg, bg;

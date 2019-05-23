@@ -35,6 +35,8 @@ void gotoxy(int x, int y);
 void putchxy(int x, int y, char ch);
 void cputsxy(int x, int y, char *str);
 void clrscr(void);
+int wherex(void);
+int wherey(void);
 
 void textbackground(COLORS color);
 void textcolor(COLORS color);
