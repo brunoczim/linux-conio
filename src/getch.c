@@ -6,6 +6,8 @@
 #include <ncurses.h>
 #undef COLORS
 
+#include <errno.h>
+#include <stdlib.h>
 #include "private.h"
 
 #define CONIO_UP 72
@@ -119,4 +121,27 @@ int _kbhit()
     priv_init();
     nodelay(stdscr, 1);
     return ibuf_loadch(&global_ibuf);
+}
+
+char *_cgets(char *buf)
+{
+    int ch;
+    char *last;
+
+    priv_init();
+
+    if (buf == NULL) {
+        errno = EINVAL;
+    } else {
+        echo();
+        last = buf;
+        while ((ch = getch()) && ch != '\n') {
+            *last = ch;
+            last++;
+        }
+        *last = 0;
+        noecho();
+    }
+
+    return buf;
 }

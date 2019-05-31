@@ -10,7 +10,7 @@ extern "C" {
 #define cputs _cputs
 #define putch _putch
 #define cprintf _cprintf
-
+#define cgets _cgets
 
 typedef enum {
     BLACK,
